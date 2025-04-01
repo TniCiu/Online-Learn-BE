@@ -24,7 +24,7 @@ class AppServiceProvider extends ServiceProvider
         Route::prefix('api')
             ->middleware('api')
             ->namespace('App\\Http\\Controllers') // Đảm bảo namespace là chính xác
-            ->group(base_path('routes/api.php')); // Đảm bảo API route được tải từ đúng file
+            ->group(base_path('routes/index.php')); // Đảm bảo API route được tải từ đúng file
     }
 }
 

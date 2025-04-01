@@ -12,7 +12,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', [AuthController::class, 'userProfile']);
     Route::post('/logout', [AuthController::class, 'logout']);
     
-    // Các API v1
     Route::get('/users', [AuthController::class, 'getUsers']); // Lấy danh sách người dùng
     Route::get('/user/{id}', [AuthController::class, 'getUser']); // Lấy thông tin người dùng theo id
     Route::put('/user/update', [AuthController::class, 'updateProfile']); // Cập nhật thông tin người dùng

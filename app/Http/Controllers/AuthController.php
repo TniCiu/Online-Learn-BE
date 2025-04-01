@@ -140,7 +140,6 @@ class AuthController extends Controller
         return response()->json(['user' => $request->user()], 200);
     }
 
-    // Đăng xuất
     public function logout(Request $request)
     {
         $request->user()->tokens()->delete();
