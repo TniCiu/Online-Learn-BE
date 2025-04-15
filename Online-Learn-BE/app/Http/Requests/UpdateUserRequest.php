@@ -6,30 +6,34 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateUserRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
-        return false;
+        return true; // Cho phép request được xử lý
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
-    public function rules()
-{
-    return [
-        'firstName' => 'sometimes|required|string',
-        'lastName' => 'sometimes|required|string',
-        'phoneNumber' => 'nullable|string',
-        'email' => 'sometimes|required|email|unique:users,email,' . $this->id,
-        'bio' => 'nullable|string',
-        'avatarUrl' => 'nullable|url',
-        'password' => 'nullable|min:6',
-    ];
-}
+    public function rules(): array
+    {
+        return [
+            'firstName' => 'sometimes|string|max:255',
+            'lastName' => 'sometimes|string|max:255',
+            'phoneNumber' => 'sometimes|string|max:20',
+            'email' => 'sometimes|email|unique:users,email,' . $this->route('id'),
+            'bio' => 'nullable|string',
+            'avatarUrl' => 'nullable|url',
+            'password' => 'nullable|string|min:6',
+        ];
+    }
 
+    public function messages(): array
+    {
+        return [
+            'firstName.string' => 'First name phải là chuỗi.',
+            'lastName.string' => 'Last name phải là chuỗi.',
+            'phoneNumber.string' => 'Số điện thoại phải là chuỗi.',
+            'email.email' => 'Email không hợp lệ.',
+            'email.unique' => 'Email đã tồn tại.',
+            'avatarUrl.url' => 'Avatar phải là một URL hợp lệ.',
+            'password.min' => 'Mật khẩu phải có ít nhất 6 ký tự.',
+        ];
+    }
 }

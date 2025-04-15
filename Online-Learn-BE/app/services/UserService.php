@@ -22,16 +22,18 @@ class UserService
         $data['id'] = Crypt::encryptString($id); 
         return $this->repo->create($data);
     }
-
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
         $user = $this->repo->find($id);
+    
         if (isset($data['password'])) {
             $data['password'] = Hash::make($data['password']);
         }
+    
         return $this->repo->update($user, $data);
     }
-
+    
+   
     public function delete($id)
     {
         $user = $this->repo->find($id);

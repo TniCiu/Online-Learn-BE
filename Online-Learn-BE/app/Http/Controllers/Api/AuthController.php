@@ -7,13 +7,12 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Tymon\JWTAuth\Facades\JWTAuth;  // Thêm dòng này để sử dụng JWTAuth
+use Tymon\JWTAuth\Facades\JWTAuth;  
 
 class AuthController extends Controller
 {
     public function login(Request $request)
     {
-        // Lấy thông tin email và password
         $credentials = $request->only('email', 'password');
 
         // Sử dụng JWTAuth để tạo token

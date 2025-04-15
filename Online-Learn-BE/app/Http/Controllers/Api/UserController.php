@@ -33,10 +33,13 @@ class UserController extends Controller
         return response()->json($this->service->find($id));
     }
 
+   
     public function update(UpdateUserRequest $request, $id)
-    {
-        return response()->json($this->service->update($id, $request->validated()));
-    }
+{
+    return response()->json($this->service->update($request->validated(), $id));
+}
+
+    
 
     public function destroy($id)
     {
