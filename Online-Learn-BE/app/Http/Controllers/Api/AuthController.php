@@ -7,7 +7,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Tymon\JWTAuth\Facades\JWTAuth;  
+use Laravel\Socialite\Facades\Socialite;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
 {
@@ -15,12 +16,10 @@ class AuthController extends Controller
     {
         $credentials = $request->only('email', 'password');
 
-        // Sử dụng JWTAuth để tạo token
         if (!$token = JWTAuth::attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
-        // Trả về token và thông tin người dùng
         return response()->json([
             'access_token' => $token,
             'user' => auth()->user()
@@ -29,7 +28,6 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
-        // Validate input
         $validator = Validator::make($request->all(), [
             'firstName' => 'required',
             'lastName' => 'required',
@@ -41,7 +39,6 @@ class AuthController extends Controller
             return response()->json($validator->errors(), 422);
         }
 
-        // Tạo người dùng mới
         $user = User::create([
             'firstName' => $request->firstName,
             'lastName' => $request->lastName,
@@ -49,12 +46,44 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        // Trả về người dùng và token (JWT)
-        $token = JWTAuth::fromUser($user);  // Tạo token từ user đã tạo
+        $token = JWTAuth::fromUser($user);
 
         return response()->json([
             'user' => $user,
             'token' => $token
         ]);
+    }
+
+    public function redirectToGoogle()
+    {
+        return Socialite::driver('google')->stateless()->redirect();
+    }
+
+    public function handleGoogleCallback()
+    {
+        try {
+            $googleUser = Socialite::driver('google')->stateless()->user();
+
+            $user = User::where('email', $googleUser->getEmail())->first();
+
+            if (!$user) {
+                $user = User::create([
+                    'firstName' => $googleUser->getName(),
+                    'lastName' => '',
+                    'email' => $googleUser->getEmail(),
+                    'avatarUrl' => $googleUser->getAvatar(),
+                    'password' => Hash::make(uniqid()),
+                ]);
+            }
+
+            $token = JWTAuth::fromUser($user);
+
+            return response()->json([
+                'token' => $token,
+                'user' => $user
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Authentication failed', 'message' => $e->getMessage()], 401);
+        }
     }
 }

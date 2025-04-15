@@ -8,7 +8,10 @@ Route::prefix('v1/users')->group(function () {
     Route::post('register', [AuthController::class, 'register']);
     Route::post('login', [AuthController::class, 'login']);
     Route::get('all', [UserController::class, 'index']);
-
+    // Đăng nhập bằng Google
+    Route::get('google/redirect', [AuthController::class, 'redirectToGoogle']);
+    Route::get('google/callback', [AuthController::class, 'handleGoogleCallback']);
+    
     // Các route yêu cầu xác thực
     Route::middleware('auth:api')->group(function () {
         Route::post('', [UserController::class, 'store']);
