@@ -1,30 +1,30 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Services;
 
-use App\Services\CloudinaryService;
-use Illuminate\Http\Request;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
-class PublicController extends Controller
+class CloudinaryService
 {
-    protected $cloudinary;
-
-    public function __construct(CloudinaryService $cloudinary)
+    /**
+     * Upload an image to Cloudinary
+     *
+     * @param \Illuminate\Http\UploadedFile $file
+     * @param string $folder
+     * @return string|null
+     */
+    public function uploadImage($file, $folder = 'default')
     {
-        $this->cloudinary = $cloudinary;
-    }
+        // Upload file lên Cloudinary
+        try {
+            $uploadResult = Cloudinary::upload($file->getRealPath(), [
+                'folder' => $folder
+            ]);
 
-    public function uploadFile(Request $request)
-    {
-        $request->validate([
-            'file' => 'required|file|mimes:jpg,jpeg,png,mp4,pdf|max:5120',
-        ]);
-
-        $uploadedUrl = $this->cloudinary->uploadImage($request->file('file'), 'public_files');
-
-        return response()->json([
-            'message' => 'Tải lên thành công!',
-            'url' => $uploadedUrl,
-        ]);
+            // Trả về URL của ảnh đã upload
+            return $uploadResult->getSecurePath();
+        } catch (\Exception $e) {
+            return null; // Trả về null nếu có lỗi trong quá trình upload
+        }
     }
 }

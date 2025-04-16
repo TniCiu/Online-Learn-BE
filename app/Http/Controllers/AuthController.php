@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
@@ -23,8 +23,12 @@ class AuthController extends Controller
 
         // Trả về token và thông tin người dùng
         return response()->json([
-            'access_token' => $token,
-            'user' => auth()->user()
+            'content' => [
+                'accessToken' => $token,
+                'user' => auth()->user(),
+                'message' => 'Login successful',
+                'status' => 200
+            ]
         ]);
     }
 
